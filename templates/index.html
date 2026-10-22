@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | Sensorless Crop Recommendation System{% endblock %}
+
+{% block content %}
+<div class="hero-banner py-4 py-lg-5 mb-4">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-8">
+                <span class="badge bg-success-light text-success fw-semibold px-3 py-2 rounded-pill mb-2">
+                    <i class="fa-solid fa-satellite me-1"></i> Satellite & Meteorological Open Data Powered
+                </span>
+                <h1 class="display-6 fw-bold text-white mb-2 font-display">
+                    Smart Crop Recommendation <span class="text-accent">Without Physical Sensors</span>
+                </h1>
+                <p class="lead text-white-50 mb-3" style="font-size: 1.05rem;">
+                    Eliminates expensive, fragile IoT hardware. Automatically captures 
+                    <strong>Temperature</strong>, <strong>Humidity</strong>, and <strong>Rainfall</strong> via real-time satellite telemetry, 
+                    and derives <strong>Soil pH</strong> through regional soil taxonomy to recommend the highest-yielding crop.
+                </p>
+                <div class="d-flex flex-wrap gap-2 text-white-50 small">
+                    <span class="info-pill"><i class="fa-solid fa-check text-success me-1"></i> 96.14% Model Accuracy (4 Parameters)</span>
+                    <span class="info-pill"><i class="fa-solid fa-check text-success me-1"></i> 22 Commercial & Food Crops</span>
+                    <span class="info-pill"><i class="fa-solid fa-check text-success me-1"></i> 0 Hardware Sensors Required</span>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center text-lg-end">
+                <div class="accuracy-card p-3 p-xl-4 rounded-4 shadow">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="text-muted small text-uppercase fw-bold">Model Precision</span>
+                        <span class="badge bg-success"><i class="fa-solid fa-circle-check me-1"></i>Trained</span>
+                    </div>
+                    <div class="display-5 fw-bold text-success mb-1">{{ metadata.accuracy_4param }}%</div>
+                    <div class="small text-muted mb-3">Random Forest Multi-class Classifier</div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: {{ metadata.accuracy_4param }}%"></div>
+                    </div>
+                    <div class="mt-2 text-muted small">Features: Temp, Humidity, pH, Rainfall</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row g-4">
+        <!-- Left Column: Input Form -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 input-card">
+                <div class="card-header bg-white border-0 pt-4 pb-2 px-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <h5 class="fw-bold mb-1 text-dark">
+                                <i class="fa-solid fa-sliders text-success me-2"></i>Agro-Climatic Parameters
+                            </h5>
+                            <p class="text-muted small mb-0">Fetch automatically by location or tune manually</p>
+                        </div>
+                        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" id="resetBtn" type="button">
+                            <i class="fa-solid fa-rotate-left me-1"></i> Reset
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-body px-4 pb-4">
+                    <!-- Sensorless Location Auto-Fetch Box -->
+                    <div class="location-fetch-box p-3 rounded-3 mb-4">
+                        <label class="form-label fw-semibold text-dark d-flex align-items-center justify-content-between mb-2">
+                            <span><i class="fa-solid fa-location-dot text-danger me-2"></i>1-Click Sensorless Location Fetch:</span>
+                            <span class="badge bg-primary-soft text-primary small">Free Weather API</span>
+                        </label>
+                        <div class="input-group mb-2">
+                            <input type="text" id="cityInput" class="form-control" placeholder="Enter city/district (e.g. Bangalore, Pune, Jaipur, Lucknow)">
+                            <button class="btn btn-success fw-semibold" id="fetchWeatherBtn" type="button">
+                                <span class="spinner-border spinner-border-sm me-1 d-none" id="fetchSpinner"></span>
+                                <i class="fa-solid fa-cloud-arrow-down me-1"></i> Auto-Fetch
+                            </button>
+                        </div>
+
+                        <!-- Quick City Chips -->
+                        <div class="d-flex flex-wrap gap-1 align-items-center mt-2">
+                            <span class="text-muted small me-1">Quick Select:</span>
+                            <button type="button" class="btn btn-xs chip-btn" data-city="Bangalore">Bangalore</button>
+                            <button type="button" class="btn btn-xs chip-btn" data-city="Hyderabad">Hyderabad</button>
+                            <button type="button" class="btn btn-xs chip-btn" data-city="Pune">Pune</button>
+                            <button type="button" class="btn btn-xs chip-btn" data-city="Lucknow">Lucknow</button>
+                            <button type="button" class="btn btn-xs chip-btn" data-city="Jaipur">Jaipur</button>
+                            <button type="button" class="btn btn-xs chip-btn" data-city="Kolkata">Kolkata</button>
+                            <button type="button" class="btn btn-xs chip-btn" data-city="Chennai">Chennai</button>
+                        </div>
+
+                        <!-- Status Alert on Fetch -->
+                        <div id="fetchStatus" class="alert alert-info py-2 px-3 small mt-2 d-none mb-0">
+                            <i class="fa-solid fa-circle-info me-1"></i> <span id="fetchStatusText"></span>
+                        </div>
+                    </div>
+
+                    <!-- Soil Type Selection (Sensorless pH Estimation) -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-dark d-flex justify-content-between">
+                            <span><i class="fa-solid fa-mountain-sun text-warning me-2"></i>Soil Classification (Estimates pH)</span>
+                            <span class="text-muted small">Auto-adjusts pH</span>
+                        </label>
+                        <select id="soilTypeSelect" class="form-select">
+                            <option value="">-- Choose Soil Type or City --</option>
+                            {% for st in soil_types %}
+                            <option value="{{ st.key }}" data-ph="{{ st.default_ph }}" data-n="{{ st.default_n }}" data-p="{{ st.default_p }}" data-k="{{ st.default_k }}">
+                                {{ st.name }} (Typical pH ~{{ st.default_ph }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted" id="soilDescription">Select soil type to auto-populate typical pH without laboratory sensors.</small>
+                    </div>
+
+                    <form id="recommendForm">
+                        <!-- Parameter 1: Temperature -->
+                        <div class="parameter-group mb-3 p-3 rounded-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="fw-semibold text-dark mb-0">
+                                    <i class="fa-solid fa-temperature-half text-danger me-2"></i>Temperature (°C)
+                                </label>
+                                <div class="value-badge">
+                                    <span id="tempValue" class="fw-bold text-primary">25.0</span> °C
+                                </div>
+                            </div>
+                            <input type="range" class="form-range" id="tempRange" min="8" max="45" step="0.5" value="25.0">
+                            <div class="d-flex justify-content-between text-muted x-small">
+                                <span>Cold (8°C)</span>
+                                <span>Moderate (25°C)</span>
+                                <span>Hot (45°C)</span>
+                            </div>
+                        </div>
+
+                        <!-- Parameter 2: Humidity -->
+                        <div class="parameter-group mb-3 p-3 rounded-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="fw-semibold text-dark mb-0">
+                                    <i class="fa-solid fa-droplet text-info me-2"></i>Relative Humidity (%)
+                                </label>
+                                <div class="value-badge">
+                                    <span id="humidityValue" class="fw-bold text-primary">70.0</span> %
+                                </div>
+                            </div>
+                            <input type="range" class="form-range" id="humidityRange" min="15" max="100" step="1" value="70">
+                            <div class="d-flex justify-content-between text-muted x-small">
+                                <span>Arid (15%)</span>
+                                <span>Balanced (60%)</span>
+                                <span>Tropical (100%)</span>
+                            </div>
+                        </div>
+
+                        <!-- Parameter 3: Soil pH -->
+                        <div class="parameter-group mb-3 p-3 rounded-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="fw-semibold text-dark mb-0">
+                                    <i class="fa-solid fa-flask-vial text-success me-2"></i>Soil pH Value
+                                </label>
+                                <div class="value-badge">
+                                    <span id="phValue" class="fw-bold text-success">6.5</span>
+                                    <span id="phLabel" class="badge bg-secondary-soft text-secondary ms-1">Neutral</span>
+                                </div>
+                            </div>
+                            <input type="range" class="form-range" id="phRange" min="3.5" max="9.5" step="0.1" value="6.5">
+                            <div class="d-flex justify-content-between text-muted x-small">
+                                <span class="text-danger">Acidic (3.5)</span>
+                                <span class="text-success">Neutral (6.5 - 7.5)</span>
+                                <span class="text-primary">Alkaline (9.5)</span>
+                            </div>
+                        </div>
+
+                        <!-- Parameter 4: Rainfall -->
+                        <div class="parameter-group mb-3 p-3 rounded-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="fw-semibold text-dark mb-0">
+                                    <i class="fa-solid fa-cloud-showers-heavy text-primary me-2"></i>Rainfall (mm)
+                                </label>
+                                <div class="value-badge">
+                                    <span id="rainfallValue" class="fw-bold text-primary">120.0</span> mm
+                                </div>
+                            </div>
+                            <input type="range" class="form-range" id="rainfallRange" min="20" max="300" step="2" value="120">
+                            <div class="d-flex justify-content-between text-muted x-small">
+                                <span>Dry / Low (20 mm)</span>
+                                <span>Moderate (120 mm)</span>
+                                <span>Heavy (300 mm)</span>
+                            </div>
+                        </div>
+
+                        <!-- Optional: Advanced NPK Nutrient Inputs -->
+                        <div class="accordion mb-4" id="advancedAccordion">
+                            <div class="accordion-item border-0 rounded-3 bg-light">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed bg-light py-2 px-3 fw-semibold text-muted" type="button" data-bs-toggle="collapse" data-bs-target="#npkCollapse">
+                                        <i class="fa-solid fa-vial-circle-check text-secondary me-2"></i>
+                                        Optional: Soil Nutrients (N, P, K)
+                                        <span class="badge bg-secondary-soft text-secondary ms-2 small">Increases accuracy to 99.55%</span>
+                                    </button>
+                                </h2>
+                                <div id="npkCollapse" class="accordion-collapse collapse" data-bs-parent="#advancedAccordion">
+                                    <div class="accordion-body pt-2 px-3 pb-3">
+                                        <p class="small text-muted mb-2">If you have a local Soil Health Card or want to use soil type defaults, specify NPK:</p>
+                                        <div class="row g-2">
+                                            <div class="col-4">
+                                                <label class="form-label x-small text-muted mb-1">Nitrogen (N)</label>
+                                                <input type="number" id="inputN" class="form-control form-control-sm" placeholder="Auto" min="0" max="150">
+                                            </div>
+                                            <div class="col-4">
+                                                <label class="form-label x-small text-muted mb-1">Phosphorus (P)</label>
+                                                <input type="number" id="inputP" class="form-control form-control-sm" placeholder="Auto" min="0" max="150">
+                                            </div>
+                                            <div class="col-4">
+                                                <label class="form-label x-small text-muted mb-1">Potassium (K)</label>
+                                                <input type="number" id="inputK" class="form-control form-control-sm" placeholder="Auto" min="0" max="210">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-success btn-lg w-100 rounded-pill fw-bold shadow-sm py-3" id="predictBtn">
+                            <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Predict Recommended Crop
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Results & Insights -->
+        <div class="col-lg-6">
+            <!-- Initial State Card -->
+            <div id="initialState" class="card border-0 shadow-sm rounded-4 h-100 p-4 text-center justify-content-center">
+                <div class="py-5">
+                    <div class="empty-icon-circle mx-auto mb-3">
+                        <i class="fa-solid fa-wheat-awn text-success fs-1"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark">Ready for Recommendation</h4>
+                    <p class="text-muted mx-auto" style="max-width: 420px;">
+                        Click <strong>"Auto-Fetch"</strong> with a city name, or adjust the parameter sliders on the left, then click <strong>"Predict Recommended Crop"</strong>.
+                    </p>
+                    <div class="row g-2 text-start justify-content-center mt-3" style="max-width: 440px; margin: 0 auto;">
+                        <div class="col-6">
+                            <div class="feature-box p-2 rounded-3 border bg-white small">
+                                <i class="fa-solid fa-cloud-sun text-primary me-1"></i> <strong>Live Weather:</strong> Temp, Humidity, Rain
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="feature-box p-2 rounded-3 border bg-white small">
+                                <i class="fa-solid fa-flask text-success me-1"></i> <strong>Soil Taxonomy:</strong> Regional pH mapping
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Spinner State -->
+            <div id="loadingState" class="card border-0 shadow-sm rounded-4 h-100 p-4 text-center justify-content-center d-none">
+                <div class="py-5">
+                    <div class="spinner-grow text-success mb-3" style="width: 3.5rem; height: 3.5rem;" role="status"></div>
+                    <h5 class="fw-bold text-dark">Analyzing Agro-Climatic Parameters...</h5>
+                    <p class="text-muted small">Passing meteorological & soil features through Random Forest Classifier</p>
+                </div>
+            </div>
+
+            <!-- Result Card -->
+            <div id="resultState" class="d-none">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                    <div class="result-header p-4 text-white">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-white-soft text-white px-3 py-1 rounded-pill small">
+                                <i class="fa-solid fa-trophy text-warning me-1"></i> Top Recommendation
+                            </span>
+                            <span class="badge bg-success-soft text-white px-3 py-1 rounded-pill small" id="resModelBadge">
+                                4-Param Sensorless Model
+                            </span>
+                        </div>
+                        <div class="d-flex align-items-baseline gap-3">
+                            <h2 class="display-6 fw-bold mb-0" id="resCropName">Rice</h2>
+                            <span class="badge bg-warning text-dark fw-bold px-3 py-1 rounded-pill" id="resConfidence">94.5% Match</span>
+                        </div>
+                        <div class="text-white-50 mt-1 small" id="resCategory">Cereal / Food Grain</div>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <!-- Key Farming Specifications -->
+                        <h6 class="text-dark fw-bold mb-3"><i class="fa-solid fa-calendar-check text-success me-2"></i>Farming Guidelines</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-sm-6">
+                                <div class="detail-box p-3 rounded-3 border bg-light h-100">
+                                    <div class="text-muted x-small text-uppercase fw-semibold mb-1">Optimal Sowing Season</div>
+                                    <div class="fw-bold text-dark" id="resSeason">Kharif (June - Nov)</div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="detail-box p-3 rounded-3 border bg-light h-100">
+                                    <div class="text-muted x-small text-uppercase fw-semibold mb-1">Water & Irrigation</div>
+                                    <div class="fw-bold text-dark" id="resWater">High (Flooded / 150-300cm)</div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="detail-box p-3 rounded-3 border bg-light">
+                                    <div class="text-muted x-small text-uppercase fw-semibold mb-1">Ideal Soil Type</div>
+                                    <div class="fw-bold text-dark" id="resSoil">Clayey loam, Alluvial soil</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Agronomic Conditions Check -->
+                        <h6 class="text-dark fw-bold mb-2"><i class="fa-solid fa-chart-simple text-primary me-2"></i>Parameter Compatibility Check</h6>
+                        <div class="row g-2 mb-4" id="paramChecksContainer">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+
+                        <!-- Cultivation Tips Alert -->
+                        <div class="alert alert-success-soft border border-success-subtle rounded-3 p-3 mb-4">
+                            <div class="d-flex gap-2">
+                                <i class="fa-solid fa-lightbulb text-success fs-5 mt-1"></i>
+                                <div>
+                                    <strong class="d-block text-success-emphasis mb-1">Cultivation Advice:</strong>
+                                    <span class="text-dark small" id="resTips">Requires abundant standing water during vegetative stage.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Alternative Candidates -->
+                        <h6 class="text-dark fw-bold mb-2"><i class="fa-solid fa-ranking-star text-warning me-2"></i>Alternative Suitable Crops</h6>
+                        <div class="list-group list-group-flush border rounded-3" id="alternativesList">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}

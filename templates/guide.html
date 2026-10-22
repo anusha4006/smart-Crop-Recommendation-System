@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}Sensorless Architecture Guide | Mini Project Documentation{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="mb-4">
+        <span class="badge bg-primary-soft text-primary px-3 py-1 rounded-pill mb-2">
+            <i class="fa-solid fa-book-open me-1"></i> Technical Documentation
+        </span>
+        <h2 class="fw-bold text-dark font-display mb-1">How Sensorless Agriculture Works</h2>
+        <p class="text-muted">A comprehensive guide on replacing physical IoT hardware with Meteorological APIs and Soil Taxonomy.</p>
+    </div>
+
+    <!-- Section 1: The Core Problem with IoT Sensors -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+        <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-triangle-exclamation text-danger me-2"></i>Why Eliminate Physical Sensors?</h5>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="p-3 bg-light rounded-3 h-100 border-start border-danger border-3">
+                    <h6 class="fw-bold text-danger">1. High Cost & Maintenance</h6>
+                    <p class="small text-muted mb-0">
+                        Soil pH sensors and RS485 probes cost thousands of rupees. In real agricultural fields, pH glass electrodes degrade within 3-6 months due to soil mineralization and moisture variations.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 bg-light rounded-3 h-100 border-start border-warning border-3">
+                    <h6 class="fw-bold text-warning">2. Power & Connectivity Issues</h6>
+                    <p class="small text-muted mb-0">
+                        IoT nodes require constant battery power or solar panels, microcontrollers (ESP32 / Arduino), and SIM GSM modules that suffer from weak cellular signal in rural farmland.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 bg-light rounded-3 h-100 border-start border-primary border-3">
+                    <h6 class="fw-bold text-primary">3. Extremely Localized Readings</h6>
+                    <p class="small text-muted mb-0">
+                        A single moisture or pH probe samples only a few cubic centimeters of dirt, failing to represent an entire 2-to-5 acre farm with varying contours and drainage.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Sensor-to-Software Mapping -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+        <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-shuffle text-success me-2"></i>Sensor Replacement Strategy</h5>
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle small mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Traditional Hardware Sensor</th>
+                        <th>Sensorless Alternative (This Project)</th>
+                        <th>Data Source / Reliability</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="fw-bold text-danger"><i class="fa-solid fa-temperature-half me-1"></i> Temperature (°C)</td>
+                        <td>DHT11 / DHT22 / DS18B20 Temperature Probe</td>
+                        <td><strong>Open-Meteo Real-time Forecast API</strong> (2m Air Temp)</td>
+                        <td>Satellite reanalysis models (ECMWF, GFS, NOAA) updated hourly.</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold text-info"><i class="fa-solid fa-droplet me-1"></i> Humidity (%)</td>
+                        <td>DHT22 / Capacitive Relative Humidity Sensor</td>
+                        <td><strong>Open-Meteo Satellite Atmospheric Telemetry</strong></td>
+                        <td>Global hydrological stations & meteorological satellite grids.</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold text-success"><i class="fa-solid fa-flask-vial me-1"></i> Soil pH</td>
+                        <td>Glass Electrode Soil pH Probe (requires buffer calibration)</td>
+                        <td><strong>Agro-Climatic Soil Taxonomy & Regional Presets</strong></td>
+                        <td>Indian Council of Agricultural Research (ICAR) & ISRIC SoilGrids classifications.</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold text-primary"><i class="fa-solid fa-cloud-showers-heavy me-1"></i> Rainfall (mm)</td>
+                        <td>Tipping Bucket Rain Gauge Sensor</td>
+                        <td><strong>Precipitation Telemetry & Seasonal Aggregation</strong></td>
+                        <td>Satellite microwave radiometers and Doppler radar precipitation measurements.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Section 3: System Architecture Flow -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+        <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-network-wired text-primary me-2"></i>System Architecture Workflow</h5>
+        <div class="row g-3 text-center">
+            <div class="col-md-3">
+                <div class="p-3 rounded-3 bg-light border h-100">
+                    <div class="badge bg-primary rounded-circle p-2 mb-2"><i class="fa-solid fa-location-crosshairs fa-lg"></i></div>
+                    <h6 class="fw-bold text-dark">Step 1: Input</h6>
+                    <p class="x-small text-muted mb-0">Farmer enters City/District name or adjusts sliders manually.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-3 rounded-3 bg-light border h-100">
+                    <div class="badge bg-info rounded-circle p-2 mb-2"><i class="fa-solid fa-satellite fa-lg"></i></div>
+                    <h6 class="fw-bold text-dark">Step 2: Satellite APIs</h6>
+                    <p class="x-small text-muted mb-0">Open-Meteo fetches real-time Temperature, Humidity & Rainfall via geocoding.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-3 rounded-3 bg-light border h-100">
+                    <div class="badge bg-warning rounded-circle p-2 mb-2"><i class="fa-solid fa-layer-group fa-lg"></i></div>
+                    <h6 class="fw-bold text-dark">Step 3: Soil Taxonomy</h6>
+                    <p class="x-small text-muted mb-0">Regional Soil Database matches soil type (Alluvial, Black, Red, etc.) and pH.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="p-3 rounded-3 bg-light border h-100">
+                    <div class="badge bg-success rounded-circle p-2 mb-2"><i class="fa-solid fa-brain fa-lg"></i></div>
+                    <h6 class="fw-bold text-dark">Step 4: Random Forest ML</h6>
+                    <p class="x-small text-muted mb-0">Predicts optimal crop with 96.14% accuracy, confidence score & cultivation guide.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 4: Academic Viva / Evaluation Q&A -->
+    <div class="card border-0 shadow-sm rounded-4 p-4">
+        <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-circle-question text-success me-2"></i>Frequently Asked Viva & Evaluation Questions</h5>
+        <div class="accordion" id="vivaAccordion">
+            <div class="accordion-item border-0 mb-2 rounded-3 bg-light">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed bg-light fw-semibold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#viva1">
+                        Q1: Why did you choose Random Forest Classifier over other ML algorithms?
+                    </button>
+                </h2>
+                <div id="viva1" class="accordion-collapse collapse" data-bs-parent="#vivaAccordion">
+                    <div class="accordion-body small text-muted">
+                        Random Forest is an ensemble of decision trees that handles non-linear agricultural boundaries exceptionally well. Unlike single Decision Trees, Random Forest resists overfitting via bootstrap aggregation (bagging) and feature bagging. It achieved <strong>96.14% accuracy</strong> on the 4 sensorless features and <strong>99.55%</strong> when soil nutrients were included, outperforming SVM and Naive Bayes.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item border-0 mb-2 rounded-3 bg-light">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed bg-light fw-semibold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#viva2">
+                        Q2: How is Soil pH calculated if there is no physical pH sensor in the soil?
+                    </button>
+                </h2>
+                <div id="viva2" class="accordion-collapse collapse" data-bs-parent="#vivaAccordion">
+                    <div class="accordion-body small text-muted">
+                        Soil pH does not fluctuate rapidly from hour to hour; it is determined by regional parent geological rock and long-term weathering. Our system uses a curated agro-soil database containing known soil classifications (Alluvial soil ~7.0 pH, Black Regur soil ~7.6 pH, Red soil ~6.2 pH, Laterite soil ~5.2 pH, Arid desert soil ~8.0 pH). When a farmer enters their district or selects their soil type, the baseline pH is mapped accurately without needing vulnerable glass electrodes.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item border-0 rounded-3 bg-light">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed bg-light fw-semibold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#viva3">
+                        Q3: Does the Open-Meteo Weather API require an API Key or paid subscription?
+                    </button>
+                </h2>
+                <div id="viva3" class="accordion-collapse collapse" data-bs-parent="#vivaAccordion">
+                    <div class="accordion-body small text-muted">
+                        No. Open-Meteo is an open-source weather API that provides high-resolution meteorological data without requiring an API key, credit card, or payment. It aggregates national weather service data (including DWD Germany, ECMWF, and NOAA) and exposes REST endpoints with up to 10,000 free daily calls, making it ideal for academic projects and farmer community deployments.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

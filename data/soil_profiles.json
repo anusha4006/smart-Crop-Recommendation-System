@@ -1,0 +1,104 @@
+{
+  "soil_types": {
+    "alluvial": {
+      "name": "Alluvial Soil (River Basin / Plains)",
+      "default_ph": 7.0,
+      "ph_range": [6.5, 7.8],
+      "default_n": 80,
+      "default_p": 45,
+      "default_k": 40,
+      "description": "Formed by river silt deposits. Highly fertile, balanced porosity, rich in potash and lime.",
+      "best_crops": ["Rice", "Wheat", "Sugarcane", "Jute", "Maize", "Pulses"]
+    },
+    "black": {
+      "name": "Black Soil (Regur / Cotton Soil)",
+      "default_ph": 7.6,
+      "ph_range": [7.2, 8.5],
+      "default_n": 50,
+      "default_p": 45,
+      "default_k": 45,
+      "description": "Rich in clay minerals, highly moisture-retentive, deep cracks during summer. High in calcium carbonate, magnesium, potash.",
+      "best_crops": ["Cotton", "Soybean", "Pigeonpeas", "Chickpea", "Sorghum"]
+    },
+    "red_yellow": {
+      "name": "Red and Yellow Soil",
+      "default_ph": 6.2,
+      "ph_range": [5.5, 6.8],
+      "default_n": 40,
+      "default_p": 35,
+      "default_k": 30,
+      "description": "Formed from crystalline igneous rocks. Red due to iron diffusion. Moderately fertile, porous structure.",
+      "best_crops": ["Groundnut", "Millets", "Pulses", "Tobacco", "Oilseeds"]
+    },
+    "laterite": {
+      "name": "Laterite Soil (High Rainfall Tropical)",
+      "default_ph": 5.2,
+      "ph_range": [4.5, 5.8],
+      "default_n": 30,
+      "default_p": 25,
+      "default_k": 30,
+      "description": "Intensely leached soil in warm humid regions with heavy rainfall. Acidic, poor in organic matter and lime.",
+      "best_crops": ["Coffee", "Rubber", "Cashewnut", "Coconut", "Tea"]
+    },
+    "arid_desert": {
+      "name": "Arid / Desert Soil",
+      "default_ph": 8.0,
+      "ph_range": [7.5, 8.8],
+      "default_n": 25,
+      "default_p": 20,
+      "default_k": 40,
+      "description": "Sandy texture with low clay content, high soluble salt content, deficient in moisture and nitrogen.",
+      "best_crops": ["Mothbeans", "Bajra (Pearl Millet)", "Barley", "Watermelon", "Dates"]
+    },
+    "mountain_forest": {
+      "name": "Mountain & Forest Soil",
+      "default_ph": 5.8,
+      "ph_range": [5.0, 6.5],
+      "default_n": 60,
+      "default_p": 35,
+      "default_k": 35,
+      "description": "Rich in organic humus from forest leaf litter, loamy to silty in valleys, slightly acidic.",
+      "best_crops": ["Apple", "Plum", "Tea", "Cardamom", "Spices", "Maize"]
+    },
+    "coastal_saline": {
+      "name": "Coastal Sandy / Saline Soil",
+      "default_ph": 7.4,
+      "ph_range": [6.8, 8.2],
+      "default_n": 35,
+      "default_p": 25,
+      "default_k": 45,
+      "description": "Sandy coastal soil influenced by sea breezes and high water table, high salinity in pockets.",
+      "best_crops": ["Coconut", "Cashew", "Oil Palm", "Paddy (Salt tolerant varieties)"]
+    }
+  },
+  "regional_presets": [
+    {"city": "Bangalore", "state": "Karnataka", "soil_type": "red_yellow", "ph": 6.2, "n": 55, "p": 40, "k": 35},
+    {"city": "Hyderabad", "state": "Telangana", "soil_type": "red_yellow", "ph": 6.8, "n": 60, "p": 42, "k": 38},
+    {"city": "Chennai", "state": "Tamil Nadu", "soil_type": "alluvial", "ph": 7.1, "n": 65, "p": 45, "k": 40},
+    {"city": "Coimbatore", "state": "Tamil Nadu", "soil_type": "black", "ph": 7.5, "n": 50, "p": 42, "k": 45},
+    {"city": "Mumbai", "state": "Maharashtra", "soil_type": "coastal_saline", "ph": 6.8, "n": 50, "p": 35, "k": 40},
+    {"city": "Pune", "state": "Maharashtra", "soil_type": "black", "ph": 7.6, "n": 55, "p": 45, "k": 48},
+    {"city": "Nagpur", "state": "Maharashtra", "soil_type": "black", "ph": 7.8, "n": 50, "p": 48, "k": 42},
+    {"city": "Kolkata", "state": "West Bengal", "soil_type": "alluvial", "ph": 6.7, "n": 85, "p": 50, "k": 45},
+    {"city": "Patna", "state": "Bihar", "soil_type": "alluvial", "ph": 7.2, "n": 80, "p": 46, "k": 40},
+    {"city": "Lucknow", "state": "Uttar Pradesh", "soil_type": "alluvial", "ph": 7.4, "n": 78, "p": 44, "k": 40},
+    {"city": "Varanasi", "state": "Uttar Pradesh", "soil_type": "alluvial", "ph": 7.3, "n": 75, "p": 45, "k": 42},
+    {"city": "Jaipur", "state": "Rajasthan", "soil_type": "arid_desert", "ph": 8.0, "n": 30, "p": 25, "k": 35},
+    {"city": "Jodhpur", "state": "Rajasthan", "soil_type": "arid_desert", "ph": 8.2, "n": 22, "p": 18, "k": 35},
+    {"city": "Bhopal", "state": "Madhya Pradesh", "soil_type": "black", "ph": 7.5, "n": 52, "p": 44, "k": 40},
+    {"city": "Indore", "state": "Madhya Pradesh", "soil_type": "black", "ph": 7.7, "n": 54, "p": 46, "k": 44},
+    {"city": "Ahmedabad", "state": "Gujarat", "soil_type": "alluvial", "ph": 7.5, "n": 60, "p": 40, "k": 45},
+    {"city": "Rajkot", "state": "Gujarat", "soil_type": "black", "ph": 7.8, "n": 48, "p": 42, "k": 40},
+    {"city": "Chandigarh", "state": "Punjab/Haryana", "soil_type": "alluvial", "ph": 7.3, "n": 85, "p": 50, "k": 45},
+    {"city": "Ludhiana", "state": "Punjab", "soil_type": "alluvial", "ph": 7.4, "n": 90, "p": 52, "k": 48},
+    {"city": "Kochi", "state": "Kerala", "soil_type": "laterite", "ph": 5.4, "n": 45, "p": 30, "k": 40},
+    {"city": "Thiruvananthapuram", "state": "Kerala", "soil_type": "laterite", "ph": 5.2, "n": 42, "p": 28, "k": 38},
+    {"city": "Shimla", "state": "Himachal Pradesh", "soil_type": "mountain_forest", "ph": 5.9, "n": 55, "p": 35, "k": 32},
+    {"city": "Dehradun", "state": "Uttarakhand", "soil_type": "mountain_forest", "ph": 6.2, "n": 60, "p": 38, "k": 36},
+    {"city": "Guwahati", "state": "Assam", "soil_type": "alluvial", "ph": 6.1, "n": 75, "p": 40, "k": 38},
+    {"city": "Bhubaneswar", "state": "Odisha", "soil_type": "red_yellow", "ph": 6.4, "n": 58, "p": 38, "k": 36},
+    {"city": "Raipur", "state": "Chhattisgarh", "soil_type": "red_yellow", "ph": 6.5, "n": 52, "p": 36, "k": 34},
+    {"city": "Ranchi", "state": "Jharkhand", "soil_type": "red_yellow", "ph": 6.0, "n": 48, "p": 34, "k": 32},
+    {"city": "Panaji", "state": "Goa", "soil_type": "laterite", "ph": 5.5, "n": 45, "p": 30, "k": 40}
+  ]
+}
